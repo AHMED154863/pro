@@ -1,0 +1,130 @@
+<section class="admin-page">
+  <header class="page-heading">
+    <p class="eyebrow">Portfolio content</p>
+    <h1>{{ config.title }}</h1>
+    <p>{{ config.description }}</p>
+  </header>
+
+  @if (errorMessage) {
+    <p class="state-message error-message" role="alert">{{ errorMessage }}</p>
+  }
+  @if (successMessage) {
+    <p class="success-message" role="status">{{ successMessage }}</p>
+  }
+
+  <div class="resource-grid">
+    @if (config.canCreate) {
+      <form class="resource-form" [formGroup]="form" (ngSubmit)="saveRecord()">
+        <div class="form-heading">
+          <h2>{{ editingId ? 'Edit item' : 'Add item' }}</h2>
+          @if (editingId) {
+            <button type="button" class="text-button" (click)="cancelEdit()">Cancel</button>
+          }
+        </div>
+
+        @for (field of config.fields; track field.key) {
+          <label
+            class="field-control"
+            [class.full-width]="field.type === 'textarea' || field.type === 'list'"
+            [class.checkbox-control]="field.type === 'checkbox'"
+          >
+            @if (field.type === 'checkbox') {
+              <input type="checkbox" [formControlName]="field.key" />
+              <span>{{ field.label }}</span>
+            } @else {
+              <span>{{ field.label }}</span>
+              @switch (field.type) {
+                @case ('textarea') {
+                  <textarea
+                    rows="4"
+                    [formControlName]="field.key"
+                    [required]="field.required === true"
+                  ></textarea>
+                }
+                @case ('list') {
+                  <textarea
+                    rows="4"
+                    [formControlName]="field.key"
+                    [required]="field.required === true"
+                    placeholder="Enter one item per line"
+                  ></textarea>
+                }
+                @case ('select') {
+                  <select [formControlName]="field.key" [required]="field.required === true">
+                    <option value="">Select a category</option>
+                    @for (option of field.options ?? []; track option) {
+                      <option [value]="option">{{ option }}</option>
+                    }
+                  </select>
+                }
+                @default {
+                  <input
+                    [type]="field.type"
+                    [formControlName]="field.key"
+                    [required]="field.required === true"
+                    [min]="field.type === 'number' ? 0 : null"
+                    [max]="field.key === 'proficiency' ? 100 : null"
+                  />
+                }
+              }
+            }
+          </label>
+        }
+
+        <div class="form-actions full-width">
+          <button type="submit" [disabled]="saving">
+            {{ saving ? 'Saving…' : editingId ? 'Save changes' : 'Create item' }}
+          </button>
+        </div>
+      </form>
+    }
+
+    <section class="records-panel" [class.full-panel]="config.collection === 'messages'">
+      <div class="panel-heading">
+        <h2>{{ config.collection === 'messages' ? 'Inbox' : 'Saved items' }}</h2>
+        @if (!loading) {
+          <span>{{ records.length }} total</span>
+        }
+      </div>
+
+      @if (loading) {
+        <p class="empty-state" role="status">Loading {{ config.title.toLowerCase() }}…</p>
+      } @else if (records.length === 0) {
+        <p class="empty-state">No {{ config.title.toLowerCase() }} have been added.</p>
+      } @else {
+        <div class="record-list">
+          @for (record of records; track record._id) {
+            <article class="record-card">
+              <div class="record-fields">
+                @for (field of config.summaryFields; track field.key) {
+                  <div class="record-field">
+                    <span>{{ field.label }}</span>
+                    <p>{{ displayValue(record, field) }}</p>
+                  </div>
+                }
+              </div>
+              <div class="record-actions">
+                @if (config.collection === 'messages') {
+                  <button
+                    type="button"
+                    class="secondary-button"
+                    (click)="toggleMessageReadState(record)"
+                  >
+                    {{ 'isRead' in record && record.isRead ? 'Mark unread' : 'Mark read' }}
+                  </button>
+                } @else {
+                  <button type="button" class="secondary-button" (click)="editRecord(record)">
+                    Edit
+                  </button>
+                }
+                <button type="button" class="delete-button" (click)="deleteRecord(record)">
+                  Delete
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  </div>
+</section>

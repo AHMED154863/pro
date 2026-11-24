@@ -1,0 +1,25 @@
+<article class="project-card h-100">
+  @if (project.screenshots.length > 0) {
+    <img
+      class="project-card-image"
+      [src]="assetUrl(project.screenshots[0])"
+      [alt]="project.title + ' preview'"
+    />
+  }
+  <div class="project-card-topline">
+    <span class="project-category">{{ project.category || 'Project' }}</span>
+    @if (project.featured) {
+      <span class="featured-label">Featured</span>
+    }
+  </div>
+  <h3>{{ project.title }}</h3>
+  <p>{{ project.summary }}</p>
+  <ul class="tech-list" aria-label="Technologies used">
+    @for (technology of project.technologies; track technology) {
+      <li>{{ technology }}</li>
+    }
+  </ul>
+  <button type="button" class="text-link" (click)="projectSelected.emit(project._id)">
+    View project <span aria-hidden="true">→</span>
+  </button>
+</article>

@@ -1,0 +1,50 @@
+<div class="page-shell container">
+  <section class="page-heading" appScrollReveal>
+    <p class="eyebrow">Skills / Toolkit</p>
+    <h1>Skills & technologies</h1>
+    <p class="section-intro">The skills below are loaded from the portfolio API.</p>
+  </section>
+  @if (skills$ | async; as skillState) {
+    @if (skillState.status === 'loading') {
+      <p class="empty-note" role="status">Loading skills…</p>
+    } @else if (skillState.status === 'loaded' && skillState.data.length > 0) {
+      <div class="row g-4">
+        @for (category of categories; track category) {
+          @let categorySkills = skillsForCategory(skillState.data, category);
+          @if (categorySkills.length > 0) {
+            <div class="col-md-6 col-xl-4">
+              <section class="content-panel h-100">
+                <p class="eyebrow">{{ category }}</p>
+                <div class="skill-list">
+                  @for (skill of categorySkills; track skill._id) {
+                    <div class="skill-row">
+                      <span>{{ skill.name }}</span>
+                      @if (skill.proficiency !== undefined) {
+                        <div
+                          class="skill-meter"
+                          role="meter"
+                          [attr.aria-valuenow]="skill.proficiency"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                          [attr.aria-label]="skill.name + ' proficiency'"
+                        >
+                          <span [style.width.%]="skill.proficiency"></span>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              </section>
+            </div>
+          }
+        }
+      </div>
+    } @else if (skillState.status === 'loaded') {
+      <p class="empty-note">Skills will appear here when they are added to the portfolio.</p>
+    } @else if (skillState.status === 'error') {
+      <p class="empty-note">{{ skillState.message }}</p>
+    } @else {
+      <p class="empty-note" role="status">Loading skills…</p>
+    }
+  }
+</div>

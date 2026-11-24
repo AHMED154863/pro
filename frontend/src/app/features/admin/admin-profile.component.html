@@ -1,0 +1,102 @@
+<section class="admin-page">
+  <header class="page-heading">
+    <p class="eyebrow">Portfolio content</p>
+    <h1>Profile</h1>
+    <p>Edit the public profile and manage the profile image and CV.</p>
+  </header>
+
+  @if (profileState.status === 'loading' || profileState.status === 'idle') {
+    <p class="state-message" role="status">Loading profile…</p>
+  } @else if (profileState.status === 'error') {
+    <p class="state-message error-message" role="alert">{{ profileState.message }}</p>
+  } @else {
+    <div class="profile-grid">
+      <form class="profile-form" [formGroup]="form" (ngSubmit)="saveProfile()">
+        <label>
+          <span>Name</span>
+          <input type="text" formControlName="name" autocomplete="name" required />
+        </label>
+        <label>
+          <span>Professional title</span>
+          <input type="text" formControlName="professionalTitle" required />
+        </label>
+        <label class="wide-field">
+          <span>Professional summary</span>
+          <textarea rows="4" formControlName="professionalSummary"></textarea>
+        </label>
+        <label class="wide-field">
+          <span>Education</span>
+          <textarea rows="3" formControlName="education"></textarea>
+        </label>
+        <label class="wide-field">
+          <span>Career journey</span>
+          <textarea rows="4" formControlName="careerJourney"></textarea>
+        </label>
+        <label class="wide-field">
+          <span>Professional goals</span>
+          <textarea rows="3" formControlName="professionalGoals"></textarea>
+        </label>
+        <label>
+          <span>Email</span>
+          <input type="email" formControlName="email" autocomplete="email" />
+        </label>
+        <label>
+          <span>LinkedIn URL</span>
+          <input type="url" formControlName="linkedInUrl" />
+        </label>
+        <label>
+          <span>GitHub username</span>
+          <input type="text" formControlName="githubUsername" />
+        </label>
+
+        <div class="wide-field form-actions">
+          <button type="submit" [disabled]="saving">
+            {{ saving ? 'Saving…' : 'Save profile' }}
+          </button>
+        </div>
+      </form>
+
+      <aside class="upload-panel" aria-label="Profile files">
+        <section>
+          <h2>Profile image</h2>
+          @if (assetUrl(profileState.data.profileImagePath); as profileImageUrl) {
+            <img class="profile-preview" [src]="profileImageUrl" alt="Current profile" />
+          } @else {
+            <p class="empty-note">No profile image uploaded.</p>
+          }
+          <label class="file-label">
+            <span>Choose an image (JPEG, PNG, WebP; up to 2 MiB)</span>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              (change)="uploadFile($event, 'image')"
+            />
+          </label>
+        </section>
+
+        <section>
+          <h2>CV</h2>
+          @if (assetUrl(profileState.data.cvPath); as cvUrl) {
+            <a [href]="cvUrl" target="_blank" rel="noopener noreferrer">Open current CV</a>
+          } @else {
+            <p class="empty-note">No CV uploaded.</p>
+          }
+          <label class="file-label">
+            <span>Choose a PDF (up to 2 MiB)</span>
+            <input type="file" accept="application/pdf" (change)="uploadFile($event, 'cv')" />
+          </label>
+          @if (uploading) {
+            <p role="status">Uploading {{ uploading }}…</p>
+          }
+        </section>
+      </aside>
+    </div>
+  }
+
+  @if (successMessage) {
+    <p class="success-message" role="status">{{ successMessage }}</p>
+  }
+  @if (errorMessage) {
+    <p class="state-message error-message" role="alert">{{ errorMessage }}</p>
+  }
+</section>

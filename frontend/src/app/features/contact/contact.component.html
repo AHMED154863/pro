@@ -1,0 +1,122 @@
+<div class="page-shell container">
+  <section class="page-heading">
+    <p class="eyebrow">Contact / Say hello</p>
+    <h1>Let’s talk</h1>
+    <p class="section-intro">
+      Send a message through the contact form. Your message will be submitted to the portfolio API.
+    </p>
+  </section>
+
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <section class="content-panel contact-details">
+        <p class="eyebrow">Get in touch</p>
+        <h2>Start a conversation</h2>
+        <p>Use the form to send a message, or reach out through the profile links below.</p>
+        @if (profile$ | async; as profileState) {
+          @if (profileState.status === 'loaded') {
+            <div class="contact-links">
+              @if (profileState.data.email) {
+                <a [href]="'mailto:' + profileState.data.email">{{ profileState.data.email }}</a>
+              }
+              @if (profileState.data.linkedInUrl) {
+                <a [href]="profileState.data.linkedInUrl" target="_blank" rel="noopener"
+                  >LinkedIn ↗</a
+                >
+              }
+              @if (profileState.data.githubUsername) {
+                <a
+                  [href]="'https://github.com/' + profileState.data.githubUsername"
+                  target="_blank"
+                  rel="noopener"
+                  >GitHub ↗</a
+                >
+              }
+              @if (
+                !profileState.data.email &&
+                !profileState.data.linkedInUrl &&
+                !profileState.data.githubUsername
+              ) {
+                <p class="muted-copy">Contact links have not been added yet.</p>
+              }
+            </div>
+          } @else if (profileState.status === 'error') {
+            <p class="muted-copy">{{ profileState.message }}</p>
+          }
+        }
+      </section>
+    </div>
+    <div class="col-lg-7">
+      <form
+        class="content-panel contact-form"
+        [formGroup]="contactForm"
+        (ngSubmit)="submit()"
+        novalidate
+      >
+        @if (successMessage) {
+          <div class="alert alert-success" role="status">{{ successMessage }}</div>
+        }
+        @if (errorMessage) {
+          <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+        }
+        <div class="mb-3">
+          <label for="contact-name" class="form-label">Name</label>
+          <input
+            id="contact-name"
+            class="form-control"
+            type="text"
+            formControlName="name"
+            autocomplete="name"
+            maxlength="100"
+          />
+          @if (contactForm.controls.name.touched && contactForm.controls.name.invalid) {
+            <small class="field-error">Enter a name with at least two characters.</small>
+          }
+        </div>
+        <div class="mb-3">
+          <label for="contact-email" class="form-label">Email</label>
+          <input
+            id="contact-email"
+            class="form-control"
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            maxlength="254"
+          />
+          @if (contactForm.controls.email.touched && contactForm.controls.email.invalid) {
+            <small class="field-error">Enter a valid email address.</small>
+          }
+        </div>
+        <div class="mb-3">
+          <label for="contact-subject" class="form-label">Subject</label>
+          <input
+            id="contact-subject"
+            class="form-control"
+            type="text"
+            formControlName="subject"
+            maxlength="150"
+          />
+          @if (contactForm.controls.subject.touched && contactForm.controls.subject.invalid) {
+            <small class="field-error">Enter a subject with at least two characters.</small>
+          }
+        </div>
+        <div class="mb-4">
+          <label for="contact-message" class="form-label">Message</label>
+          <textarea
+            id="contact-message"
+            class="form-control"
+            rows="5"
+            formControlName="message"
+            maxlength="5000"
+          ></textarea>
+          @if (contactForm.controls.message.touched && contactForm.controls.message.invalid) {
+            <small class="field-error">Enter a message with at least five characters.</small>
+          }
+        </div>
+        <button class="btn btn-accent" type="submit" [disabled]="submitting">
+          {{ submitting ? 'Sending…' : 'Send message' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,95 @@
+<div class="page-shell container">
+  <section class="page-heading" appScrollReveal>
+    <p class="eyebrow">About / Background</p>
+    <h1>About</h1>
+    <p class="section-intro">
+      Professional background and goals, managed through the portfolio API.
+    </p>
+  </section>
+
+  @if (profile$ | async; as profileState) {
+    @if (profileState.status === 'loading') {
+      <p class="empty-note" role="status">Loading profile…</p>
+    } @else if (profileState.status === 'loaded') {
+      <section class="content-panel mb-4" appScrollReveal>
+        <p class="eyebrow">Introduction</p>
+        <h2>{{ profileState.data.name }}</h2>
+        <p class="accent-copy">{{ profileState.data.professionalTitle }}</p>
+        <p>
+          {{
+            profileState.data.professionalSummary ||
+              'A professional summary has not been added yet.'
+          }}
+        </p>
+        @if (profileState.data.education) {
+          <p><span class="accent-copy">Education:</span> {{ profileState.data.education }}</p>
+        }
+      </section>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <section class="content-panel h-100" appScrollReveal>
+            <p class="eyebrow">Career journey</p>
+            <h2>Experience & direction</h2>
+            <p>
+              {{ profileState.data.careerJourney || 'Career details will be added when provided.' }}
+            </p>
+          </section>
+        </div>
+        <div class="col-lg-6">
+          <section class="content-panel h-100" appScrollReveal>
+            <p class="eyebrow">Professional goals</p>
+            <h2>Looking ahead</h2>
+            <p>
+              {{
+                profileState.data.professionalGoals ||
+                  'Professional goals will be added when provided.'
+              }}
+            </p>
+          </section>
+        </div>
+      </div>
+    } @else if (profileState.status === 'error') {
+      <p class="empty-note">{{ profileState.message }}</p>
+    } @else {
+      <p class="empty-note" role="status">Loading profile…</p>
+    }
+  }
+
+  <section class="section-block" appScrollReveal>
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Education</p>
+        <h2>Learning journey</h2>
+      </div>
+    </div>
+    @if (education$ | async; as educationState) {
+      @if (educationState.status === 'loading') {
+        <p class="empty-note" role="status">Loading education…</p>
+      } @else if (educationState.status === 'loaded' && educationState.data.length > 0) {
+        <div class="row g-3">
+          @for (item of educationState.data; track item._id) {
+            <div class="col-md-6">
+              <article class="content-panel h-100">
+                <h3>{{ item.degree }}</h3>
+                <p class="accent-copy">{{ item.institution }}</p>
+                @if (item.fieldOfStudy) {
+                  <p>{{ item.fieldOfStudy }}</p>
+                }
+                @if (item.description) {
+                  <p class="muted-copy">{{ item.description }}</p>
+                }
+              </article>
+            </div>
+          }
+        </div>
+      } @else if (educationState.status === 'loaded') {
+        <p class="empty-note">Education details will appear here when provided.</p>
+      } @else if (educationState.status === 'error') {
+        <p class="empty-note">{{ educationState.message }}</p>
+      } @else {
+        <p class="empty-note" role="status">Loading education…</p>
+      }
+    }
+  </section>
+  <a class="text-link" routerLink="/contact">Get in touch <span aria-hidden="true">→</span></a>
+</div>

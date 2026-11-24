@@ -1,0 +1,117 @@
+<div class="page-shell container">
+  <a class="back-link" routerLink="/projects">← Back to projects</a>
+  @if (projectState$ | async; as projectState) {
+    @if (projectState.status === 'loading') {
+      <p class="empty-note" role="status">Loading project…</p>
+    } @else if (projectState.status === 'loaded') {
+      <article class="project-detail">
+        <p class="eyebrow">{{ projectState.data.category || 'Project details' }}</p>
+        <h1>{{ projectState.data.title }}</h1>
+        <p class="detail-lead">{{ projectState.data.summary }}</p>
+        <ul class="tech-list">
+          @for (technology of projectState.data.technologies; track technology) {
+            <li>{{ technology }}</li>
+          }
+        </ul>
+
+        @if (projectState.data.overview) {
+          <section class="detail-section">
+            <h2>Overview</h2>
+            <p>{{ projectState.data.overview }}</p>
+          </section>
+        }
+        @if (projectState.data.problem || projectState.data.solution) {
+          <div class="row g-4 detail-section">
+            @if (projectState.data.problem) {
+              <div class="col-md-6">
+                <section class="content-panel h-100">
+                  <h2>The problem</h2>
+                  <p>{{ projectState.data.problem }}</p>
+                </section>
+              </div>
+            }
+            @if (projectState.data.solution) {
+              <div class="col-md-6">
+                <section class="content-panel h-100">
+                  <h2>The solution</h2>
+                  <p>{{ projectState.data.solution }}</p>
+                </section>
+              </div>
+            }
+          </div>
+        }
+        @if (projectState.data.features.length > 0) {
+          <section class="detail-section">
+            <h2>Key features</h2>
+            <ul class="feature-list">
+              @for (feature of projectState.data.features; track feature) {
+                <li>{{ feature }}</li>
+              }
+            </ul>
+          </section>
+        }
+        @if (projectState.data.screenshots.length > 0) {
+          <section class="detail-section">
+            <h2>Screenshots</h2>
+            <div class="row g-3">
+              @for (screenshot of projectState.data.screenshots; track screenshot) {
+                <div class="col-md-6">
+                  <img
+                    class="project-screenshot"
+                    [src]="assetUrl(screenshot)"
+                    [alt]="projectState.data.title + ' screenshot'"
+                  />
+                </div>
+              }
+            </div>
+          </section>
+        }
+        <div class="hero-actions">
+          @if (projectState.data.githubUrl) {
+            <a
+              class="btn btn-outline-accent"
+              [href]="projectState.data.githubUrl"
+              target="_blank"
+              rel="noopener"
+              >GitHub repository ↗</a
+            >
+          }
+          @if (projectState.data.liveDemoUrl) {
+            <a
+              class="btn btn-accent"
+              [href]="projectState.data.liveDemoUrl"
+              target="_blank"
+              rel="noopener"
+              >Live demo ↗</a
+            >
+          }
+        </div>
+        @if (projects$ | async; as projectListState) {
+          @if (projectListState.status === 'loaded') {
+            @let related = relatedProjects(projectState.data, projectListState.data);
+            @if (related.length > 0) {
+              <section class="detail-section">
+                <p class="eyebrow">Explore more</p>
+                <h2>Related projects</h2>
+                <div class="row g-4">
+                  @for (project of related; track project._id) {
+                    <div class="col-md-6 col-xl-4">
+                      <app-project-card
+                        [project]="project"
+                        (projectSelected)="openProject($event)"
+                      />
+                    </div>
+                  }
+                </div>
+              </section>
+            }
+          }
+        }
+      </article>
+    } @else if (projectState.status === 'error') {
+      <p class="empty-note" role="alert">{{ projectState.message }}</p>
+    } @else {
+      <p class="empty-note" role="status">Loading project…</p>
+    }
+  }
+</div>

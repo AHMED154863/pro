@@ -1,0 +1,57 @@
+<section class="admin-page">
+  <header class="page-heading">
+    <p class="eyebrow">Overview</p>
+    <h1>Dashboard</h1>
+    <p>Current totals and the latest updates stored in the portfolio database.</p>
+  </header>
+
+  @if (state.status === 'loading' || state.status === 'idle') {
+    <p class="state-message" role="status">Loading dashboard…</p>
+  } @else if (state.status === 'error') {
+    <p class="state-message error-message" role="alert">{{ state.message }}</p>
+  } @else {
+    <div class="stat-grid">
+      <a class="stat-card" routerLink="/admin/projects">
+        <span>Total projects</span>
+        <strong>{{ state.data.totalProjects }}</strong>
+      </a>
+      <a class="stat-card" routerLink="/admin/skills">
+        <span>Total skills</span>
+        <strong>{{ state.data.totalSkills }}</strong>
+      </a>
+      <a class="stat-card" routerLink="/admin/messages">
+        <span>Total messages</span>
+        <strong>{{ state.data.totalMessages }}</strong>
+      </a>
+      <a class="stat-card" routerLink="/admin/messages">
+        <span>Unread messages</span>
+        <strong>{{ state.data.unreadMessages }}</strong>
+      </a>
+    </div>
+
+    <section class="activity-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Database updates</p>
+          <h2>Recent activity</h2>
+        </div>
+      </div>
+
+      @if (state.data.recentActivities.length > 0) {
+        <ul class="activity-list">
+          @for (activity of state.data.recentActivities; track activity.id + activity.type) {
+            <li>
+              <span class="activity-type">{{ activity.type }}</span>
+              <strong>{{ activity.title }}</strong>
+              <time [attr.datetime]="activity.occurredAt">
+                {{ activity.occurredAt | date: 'medium' }}
+              </time>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="empty-state">Activity will appear when portfolio content is added.</p>
+      }
+    </section>
+  }
+</section>

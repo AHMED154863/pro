@@ -1,0 +1,38 @@
+<div class="admin-shell">
+  <aside class="admin-sidebar" aria-label="Admin navigation">
+    <a class="admin-brand" routerLink="/admin/dashboard">
+      <span class="brand-mark">AR</span>
+      <span>
+        <strong>Portfolio</strong>
+        <small>Local admin</small>
+      </span>
+    </a>
+
+    <p class="local-notice">
+      Local development only. No sign-in is used; the backend accepts admin requests only on
+      localhost.
+    </p>
+
+    <nav class="admin-navigation">
+      @for (item of navigation; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+
+    <a class="public-link" routerLink="/home">View public portfolio</a>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <p>Ahmed Zakaria Rashad</p>
+      <span class="local-badge">Local only</span>
+    </header>
+    <router-outlet />
+  </main>
+</div>

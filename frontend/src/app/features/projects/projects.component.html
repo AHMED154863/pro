@@ -1,0 +1,76 @@
+<div class="page-shell container">
+  <section class="page-heading" appScrollReveal>
+    <p class="eyebrow">Projects / Selected work</p>
+    <h1>Projects</h1>
+    <p class="section-intro">
+      Explore projects and their technologies. All entries come from the portfolio API.
+    </p>
+  </section>
+
+  @if (projects$ | async; as projectState) {
+    @if (projectState.status === 'loaded' && projectState.data.length > 0) {
+      <form class="filter-panel" #filtersForm="ngForm" aria-label="Filter projects">
+        <div class="filter-search">
+          <label for="project-search">Search projects</label>
+          <input
+            id="project-search"
+            class="form-control"
+            type="search"
+            name="search"
+            [(ngModel)]="searchTerm"
+            placeholder="Search title, summary, or technology"
+          />
+        </div>
+        <div>
+          <label for="project-category">Category</label>
+          <select
+            id="project-category"
+            class="form-select"
+            name="category"
+            [(ngModel)]="selectedCategory"
+          >
+            <option value="">All categories</option>
+            @for (category of categories(projectState.data); track category) {
+              <option [value]="category">{{ category }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label for="project-technology">Technology</label>
+          <select
+            id="project-technology"
+            class="form-select"
+            name="technology"
+            [(ngModel)]="selectedTechnology"
+          >
+            <option value="">All technologies</option>
+            @for (technology of technologies(projectState.data); track technology) {
+              <option [value]="technology">{{ technology }}</option>
+            }
+          </select>
+        </div>
+      </form>
+      @let results = visibleProjects(projectState);
+      @if (results.length > 0) {
+        <div class="row g-4">
+          @for (project of results; track project._id) {
+            <div class="col-md-6 col-xl-4">
+              <app-project-card [project]="project" (projectSelected)="openProject($event)" />
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="empty-note">No projects match these filters.</p>
+      }
+    } @else if (projectState.status === 'loaded') {
+      <p class="empty-note">Projects will appear here when they are added to the portfolio.</p>
+    } @else if (projectState.status === 'error') {
+      <div class="state-card" role="alert">
+        <p>{{ projectState.message }}</p>
+        <button class="btn btn-outline-accent" type="button" (click)="retry()">Try again</button>
+      </div>
+    } @else {
+      <p class="empty-note" role="status">Loading projects…</p>
+    }
+  }
+</div>

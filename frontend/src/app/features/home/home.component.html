@@ -1,0 +1,205 @@
+<div class="page-shell">
+  <section class="hero-section container" appScrollReveal>
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="status-pulse"></span> Portfolio / Overview</p>
+      @if (profile$ | async; as profileState) {
+        @if (profileState.status === 'loaded') {
+          <h1>{{ profileState.data.name }}</h1>
+          <p class="hero-role">{{ profileState.data.professionalTitle }}</p>
+          @if (profileState.data.professionalSummary) {
+            <p class="hero-summary">{{ profileState.data.professionalSummary }}</p>
+          }
+          <div class="hero-actions">
+            <a class="btn btn-accent" routerLink="/projects"
+              >Explore projects <span aria-hidden="true">→</span></a
+            >
+            <a class="btn btn-outline-accent" routerLink="/contact">Contact me</a>
+            @if (profileState.data.cvPath) {
+              <a
+                class="text-link"
+                [href]="assetUrl(profileState.data.cvPath)"
+                target="_blank"
+                rel="noopener"
+                >Download CV</a
+              >
+            }
+          </div>
+          <div class="social-links">
+            @if (profileState.data.githubUsername) {
+              <a
+                [href]="'https://github.com/' + profileState.data.githubUsername"
+                target="_blank"
+                rel="noopener"
+                >GitHub ↗</a
+              >
+            }
+            @if (profileState.data.linkedInUrl) {
+              <a [href]="profileState.data.linkedInUrl" target="_blank" rel="noopener"
+                >LinkedIn ↗</a
+              >
+            }
+          </div>
+        } @else if (profileState.status === 'loading') {
+          <h1>Portfolio</h1>
+          <div class="state-card" role="status">Loading profile…</div>
+        } @else if (profileState.status === 'error') {
+          <h1>Portfolio</h1>
+          <div class="state-card" role="status">{{ profileState.message }}</div>
+        } @else {
+          <h1>Portfolio</h1>
+          <div class="state-card" role="status">Loading profile…</div>
+        }
+      }
+    </div>
+    <div class="hero-art">
+      @if (profile$ | async; as profileState) {
+        @if (profileState.status === 'loaded' && profileState.data.profileImagePath) {
+          <img
+            class="profile-image"
+            [src]="assetUrl(profileState.data.profileImagePath)"
+            [alt]="profileState.data.name + ' profile image'"
+          />
+        }
+      }
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-monogram" aria-hidden="true">&lt;/&gt;</div>
+      <span class="hero-orbit orbit-one" aria-hidden="true"></span>
+      <span class="hero-orbit orbit-two" aria-hidden="true"></span>
+    </div>
+  </section>
+
+  <section class="section-block container" appScrollReveal>
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">01 / About</p>
+        <h2>A little about me</h2>
+      </div>
+      <a class="text-link" routerLink="/about">More about me <span aria-hidden="true">→</span></a>
+    </div>
+    @if (profile$ | async; as profileState) {
+      @if (profileState.status === 'loaded' && profileState.data.professionalSummary) {
+        <p class="section-intro">{{ profileState.data.professionalSummary }}</p>
+      } @else if (profileState.status === 'loaded') {
+        <p class="empty-note">
+          A professional introduction will appear here when profile content is added.
+        </p>
+      } @else if (profileState.status === 'error') {
+        <p class="empty-note">{{ profileState.message }}</p>
+      }
+    }
+  </section>
+
+  <section class="section-block container" appScrollReveal>
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">02 / Expertise</p>
+        <h2>Skills & technologies</h2>
+      </div>
+      <a class="text-link" routerLink="/skills"
+        >View all skills <span aria-hidden="true">→</span></a
+      >
+    </div>
+    @if (skills$ | async; as skillState) {
+      @if (skillState.status === 'loading') {
+        <p class="empty-note" role="status">Loading skills…</p>
+      } @else if (skillState.status === 'loaded' && skillState.data.length > 0) {
+        <div class="skill-chips">
+          @for (skill of skillState.data.slice(0, 8); track skill._id) {
+            <span class="skill-chip"
+              >{{ skill.name }}<small>{{ skill.category }}</small></span
+            >
+          }
+        </div>
+      } @else if (skillState.status === 'loaded') {
+        <p class="empty-note">Skills will appear here when they are added to the portfolio.</p>
+      } @else if (skillState.status === 'error') {
+        <p class="empty-note">{{ skillState.message }}</p>
+      } @else {
+        <p class="empty-note" role="status">Loading skills…</p>
+      }
+    }
+  </section>
+
+  <section class="section-block container" appScrollReveal>
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">03 / Selected work</p>
+        <h2>Featured projects</h2>
+      </div>
+      <a class="text-link" routerLink="/projects">All projects <span aria-hidden="true">→</span></a>
+    </div>
+    @if (projects$ | async; as projectState) {
+      @if (projectState.status === 'idle' || projectState.status === 'loading') {
+        <p class="empty-note" role="status">Loading projects…</p>
+      } @else if (projectState.status === 'loaded') {
+        @let featured = featuredProjects(projectState.data);
+        @if (featured.length > 0) {
+          <div class="row g-4">
+            @for (project of featured; track project._id) {
+              <div class="col-md-6 col-xl-4">
+                <app-project-card [project]="project" (projectSelected)="openProject($event)" />
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="empty-note">
+            Featured projects will appear here when they are selected in the portfolio.
+          </p>
+        }
+      } @else {
+        <p class="empty-note">{{ projectState.message }}</p>
+        <button class="btn btn-outline-accent" type="button" (click)="retryProjects()">
+          Try again
+        </button>
+      }
+    }
+  </section>
+
+  <section class="section-block container" appScrollReveal>
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">04 / Journey</p>
+        <h2>Experience</h2>
+      </div>
+      <a class="text-link" routerLink="/experience"
+        >Explore experience <span aria-hidden="true">→</span></a
+      >
+    </div>
+    @if (experiences$ | async; as experienceState) {
+      @if (experienceState.status === 'loading') {
+        <p class="empty-note" role="status">Loading experience…</p>
+      } @else if (experienceState.status === 'loaded' && experienceState.data.length > 0) {
+        <div class="timeline-preview">
+          @for (experience of experienceState.data.slice(0, 2); track experience._id) {
+            <article class="timeline-item">
+              <span class="timeline-marker" aria-hidden="true"></span>
+              <div>
+                <h3>{{ experience.title }}</h3>
+                <p>{{ experience.organization }}</p>
+                @if (experience.description) {
+                  <p class="muted-copy">{{ experience.description }}</p>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      } @else if (experienceState.status === 'loaded') {
+        <p class="empty-note">Experience details will appear here when provided.</p>
+      } @else if (experienceState.status === 'error') {
+        <p class="empty-note">{{ experienceState.message }}</p>
+      } @else {
+        <p class="empty-note" role="status">Loading experience…</p>
+      }
+    }
+  </section>
+
+  <section class="contact-banner container" appScrollReveal>
+    <div>
+      <p class="eyebrow">Have a project in mind?</p>
+      <h2>Let’s build something meaningful.</h2>
+    </div>
+    <a class="btn btn-accent" routerLink="/contact"
+      >Start a conversation <span aria-hidden="true">→</span></a
+    >
+  </section>
+</div>

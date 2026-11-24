@@ -1,0 +1,147 @@
+.admin-page {
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.page-heading {
+  margin-bottom: 2rem;
+}
+
+.page-heading h1 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+}
+
+.page-heading p:last-child {
+  margin-bottom: 0;
+}
+
+.eyebrow {
+  margin-bottom: 0.5rem;
+  color: var(--accent-cyan);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(16rem, 0.8fr);
+  align-items: start;
+  gap: 1.25rem;
+}
+
+.profile-form,
+.upload-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid var(--line-color);
+  border-radius: 0.9rem;
+  background: var(--card-bg);
+}
+
+.profile-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.profile-form label,
+.file-label {
+  display: grid;
+  gap: 0.45rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.profile-form input,
+.profile-form textarea,
+.file-label input {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line-color);
+  border-radius: 0.5rem;
+  background: var(--surface-bg);
+  color: var(--text-primary);
+}
+
+.wide-field {
+  grid-column: 1 / -1;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form-actions button {
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  border: 0;
+  border-radius: 0.55rem;
+  background: var(--accent-blue);
+  color: white;
+  font-weight: 600;
+}
+
+.form-actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.upload-panel {
+  gap: 1.5rem;
+}
+
+.upload-panel section {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.upload-panel h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.profile-preview {
+  width: min(100%, 12rem);
+  aspect-ratio: 1;
+  border: 1px solid var(--line-color);
+  border-radius: 0.75rem;
+  object-fit: cover;
+}
+
+.empty-note {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.state-message,
+.success-message {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--line-color);
+  border-radius: 0.75rem;
+  background: var(--card-bg);
+}
+
+.error-message {
+  border-color: rgba(248, 113, 113, 0.4);
+  color: #fca5a5;
+}
+
+.success-message {
+  border-color: rgba(34, 197, 94, 0.4);
+  color: #86efac;
+}
+
+@media (max-width: 900px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .profile-form {
+    grid-template-columns: 1fr;
+  }
+}

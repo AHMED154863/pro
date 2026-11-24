@@ -1,0 +1,133 @@
+.admin-page {
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.page-heading {
+  margin-bottom: 2rem;
+}
+
+.page-heading h1 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+}
+
+.page-heading p:last-child {
+  margin-bottom: 0;
+}
+
+.eyebrow {
+  margin-bottom: 0.5rem;
+  color: var(--accent-cyan);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.stat-card,
+.activity-panel {
+  border: 1px solid var(--line-color);
+  border-radius: 0.9rem;
+  background: var(--card-bg);
+}
+
+.stat-card {
+  display: grid;
+  min-height: 8rem;
+  align-content: space-between;
+  padding: 1.25rem;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.stat-card:hover {
+  border-color: var(--accent-blue);
+}
+
+.stat-card strong {
+  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+}
+
+.activity-panel {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+}
+
+.panel-heading h2 {
+  margin-bottom: 0;
+  font-size: 1.5rem;
+}
+
+.activity-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.activity-list li {
+  display: grid;
+  grid-template-columns: 8rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--line-color);
+}
+
+.activity-type,
+.activity-list time {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.activity-list strong {
+  overflow-wrap: anywhere;
+}
+
+.activity-list time {
+  text-align: right;
+}
+
+.state-message,
+.empty-state {
+  padding: 1rem;
+  border: 1px solid var(--line-color);
+  border-radius: 0.75rem;
+  background: var(--card-bg);
+  color: var(--text-muted);
+}
+
+.error-message {
+  border-color: rgba(248, 113, 113, 0.4);
+  color: #fca5a5;
+}
+
+@media (max-width: 900px) {
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-list li {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+
+  .activity-list time {
+    text-align: left;
+  }
+}
